@@ -96,6 +96,7 @@ symbol = " "
 symbol = " "
 
 [hostname]
+disabled = true
 ssh_symbol = " "
 
 [java]
