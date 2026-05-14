@@ -22,3 +22,7 @@ if [[ -n "$TMUX" ]] && (( $+functions[set_title] )); then
     set_title screen "$OMZ_SHORT_DIR: $cmd"
   }
 fi
+
+if (( $+functions[clipcopy] )); then
+    alias XCC='| clipcopy'
+fi
