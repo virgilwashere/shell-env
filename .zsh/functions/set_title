@@ -26,6 +26,7 @@ window_or_icon () {
 
 case "$type" in
   icon)   window_or_icon 1;;
+  # window affects tmux pane title
   window) window_or_icon 2;;
   screen) echo -n "\ek$title\e\\" ;;
   *)      print "Usage: set_title ( window | icon | screen ) <title>"

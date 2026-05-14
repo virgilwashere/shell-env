@@ -67,11 +67,17 @@ cx () {
     new_title="${new_title##-l?( )}"
     eval $restore_nullglob
 
-    if [[ "$USERNAME" == 'root' ]]; then
-      suffix="${short_host}#"
-    else
-      suffix="$USERNAME@${short_host}"
-    fi
+    case "$USERNAME" in
+        root)
+            suffix="${short_host}#"
+            ;;
+        adam|ubuntu)
+            suffix="${short_host}"
+            ;;
+        *)
+            suffix="$USERNAME@${short_host}"
+            ;;
+    esac
 
     # w/i/s == window/icon/screen
     wsuffix=" : $suffix"
@@ -88,7 +94,7 @@ cx () {
     full_stitle="$suffix"
   else
     # w/i/s == window/icon/screen
-    full_wtitle="$new_title$wsuffix"
+    full_wtitle="$new_title" # keep short for tmux
     full_ititle="$new_title$isuffix"
     full_stitle="$new_title$ssuffix"
   fi
@@ -99,7 +105,7 @@ cx () {
 
   set_title window "$full_wtitle"
   set_title icon "$full_ititle"
-  [[ -n "$IN_SCREEN" || -n "$TMUX" ]] && 
+  [[ -n "$IN_SCREEN" || -n "$TMUX" ]] &&
     set_title screen "$full_stitle"
   return 0
 }
