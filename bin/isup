@@ -1,6 +1,6 @@
 #!/bin/bash
 
-PING_COUNT=10
+: ${PING_COUNT:=5}
 
 me=`basename $0`
 
