@@ -1,0 +1,11 @@
+# Mirror the window title into the herdr tab label, when running
+# inside herdr.  $HERDR_TAB_ID is exported into every pane's
+# environment by herdr itself.
+
+if [[ -n "$HERDR_TAB_ID" ]] && (( $+commands[herdr] )); then
+  # Renaming to "" would be rejected, and herdr shows its own default
+  # label in that case anyway.
+  if [[ -n "$full_wtitle" ]]; then
+    herdr tab rename "$HERDR_TAB_ID" "$full_wtitle" >/dev/null 2>&1
+  fi
+fi
