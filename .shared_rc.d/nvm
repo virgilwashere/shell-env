@@ -16,3 +16,40 @@ nvm()  { _nvm_load; nvm  "$@"; }
 node() { _nvm_load; node "$@"; }
 npm()  { _nvm_load; npm  "$@"; }
 npx()  { _nvm_load; npx  "$@"; }
+
+# The stubs above only cover nvm's own binaries, so globally installed
+# package binaries (pi, tsc, ...) stay off $PATH until something triggers
+# _nvm_load.  Put the default version's bin directory on $PATH eagerly,
+# resolving the alias by reading files rather than running nvm, to avoid
+# paying the startup cost described above.
+_nvm_default_bin () {
+  local alias_file="$NVM_DIR/alias/default" target=
+
+  # Follow alias indirection (e.g. default -> lts/jod -> v22.17.1), bounded
+  # in case of a cycle.
+  local i=0
+  target=$(cat "$alias_file" 2>/dev/null) || return 1
+  while [ -n "$target" ] && [ "$i" -lt 5 ]; do
+    [ -s "$NVM_DIR/alias/$target" ] || break
+    target=$(cat "$NVM_DIR/alias/$target")
+    i=$((i + 1))
+  done
+  [ -n "$target" ] || return 1
+
+  # An exact version needs no globbing; a bare major (e.g. "24") matches
+  # several, so take the highest.
+  if [ -d "$NVM_DIR/versions/node/$target/bin" ]; then
+    echo "$NVM_DIR/versions/node/$target/bin"
+    return 0
+  fi
+
+  local newest=
+  newest=$(ls -d "$NVM_DIR/versions/node/v${target#v}".*/bin 2>/dev/null |
+             sort -V | tail -1)
+  [ -n "$newest" ] || return 1
+  echo "$newest"
+}
+
+_nvm_bin=$(_nvm_default_bin) && safe_add_to_path "$_nvm_bin"
+unset _nvm_bin
+unset -f _nvm_default_bin
