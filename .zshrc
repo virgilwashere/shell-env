@@ -1040,6 +1040,8 @@ fi
 # {{{ Specific to local setups
 
 sh_load_status 'local hooks'
+# Atuin is initialized by .zshrc.d/atuin; this "atuin init zsh" sentinel
+# prevents its installer from appending a second, default initialization.
 run_hooks .zshrc.d
 
 # }}}

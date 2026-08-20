@@ -1,0 +1,6 @@
+# -*- mode: sh -*-
+
+# Make a locally installed Atuin available to every supported shell.
+if [ -f "$HOME/.atuin/bin/env" ]; then
+    . "$HOME/.atuin/bin/env"
+fi

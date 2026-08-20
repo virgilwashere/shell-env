@@ -16,4 +16,7 @@ if which atuin >&/dev/null; then
         # bind to the up key, which depends on terminal mode
         #bindkey '^[[A' atuin-up-search
     fi
+
+    # Prevent any later, duplicate Atuin initialization from rebinding keys.
+    export ATUIN_NOBIND=true
 fi
