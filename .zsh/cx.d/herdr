@@ -2,10 +2,15 @@
 # inside herdr.  $HERDR_TAB_ID is exported into every pane's
 # environment by herdr itself.
 
-if [[ -n "$HERDR_TAB_ID" ]] && (( $+commands[herdr] )); then
-  # Renaming to "" would be rejected, and herdr shows its own default
-  # label in that case anyway.
-  if [[ -n "$full_wtitle" ]]; then
-    herdr tab rename "$HERDR_TAB_ID" "$full_wtitle" >/dev/null 2>&1
+if [[ -n "$HERDR_TAB_ID" && -n "$full_wtitle" ]]; then
+  # Prefer the explicitly configured client because another herdr on PATH may
+  # speak an incompatible protocol.
+  local herdr_bin=${HERDR_BIN_PATH:-${commands[herdr]-}}
+  local herdr_error
+
+  if [[ -z "$herdr_bin" ]]; then
+    print -u2 -- "cx: cannot rename Herdr tab: set HERDR_BIN_PATH or add herdr to PATH"
+  elif ! herdr_error=$("$herdr_bin" tab rename "$HERDR_TAB_ID" "$full_wtitle" 2>&1); then
+    print -u2 -- "cx: Herdr tab rename failed: ${herdr_error:-unknown error}"
   fi
 fi
